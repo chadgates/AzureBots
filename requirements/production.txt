@@ -1,0 +1,6 @@
+# Pro-tip: Try not to put anything here. Avoid dependencies in
+#	production that aren't in development.
+-r base.txt
+
+azure-servicebus==0.20.3
+# pyinotify==0.9.6
