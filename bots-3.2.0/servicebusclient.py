@@ -1,5 +1,5 @@
 # !/usr/bin/env python
-from azure.servicebus import ServiceBusService, Queue, Message
+from azure.servicebus import ServiceBusService, Queue
 
 import sys
 import os
@@ -49,14 +49,14 @@ def start():
         print 'Error: bots jobqueue cannot start; not enabled in %s/bots.ini' % configdir
         sys.exit(1)
 
-    #TODO: Review settings which make sense
+    # TODO: Review settings which make sense
     queue_options = Queue()
     queue_options.max_size_in_megabytes = '5120'
     queue_options.default_message_time_to_live = 'PT1M'
     queue_options.dead_lettering_on_message_expiration = True
 
     try:
-        if bus_service.create_queue('botsqueue',queue_options ,fail_on_exist=False):
+        if bus_service.create_queue('botsqueue', queue_options, fail_on_exist=False):
             print('Info: Azure queue created')
         else:
             print('Info: Azure queue already exists')
@@ -73,53 +73,58 @@ def start():
     botsenginepath = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])),
                                   'bots-engine.py')  # get path to bots-engine
     cond = threading.Condition()
-    logger.info(u'Bots %(process_name)s started.',{'process_name':process_name})
+    logger.info(u'Bots %(process_name)s started.', {'process_name': process_name})
     active_receiving = False
     timeout = 2.0
     cond.acquire()
-
-    while True:
-        #this functions as a buffer: all events go into set tasks.
-        #the tasks are fired to jobqueue after TIMOUT sec.
-        #this is to avoid firing to many tasks to jobqueue; events typically come in bursts.
-        #is value of timeout is larger, reaction times are slower...but less tasks are fired to jobqueue.
-        #in itself this is not a problem, as jobqueue will alos discard duplicate jobs.
-        #2 sec seems to e a good value: reasonable quick, not to nervous.
-        cond.wait(timeout=timeout)    #get back when results, or after timeout sec
-        #TODO: Trace why messages are somewhat received twice... or not deleted after success
-        busmsg = bus_service.receive_queue_message('botsqueue', peek_lock=True)
-
-        if busmsg.body:
-            print(busmsg.body)
-            if not active_receiving:    #first request (after tasks have been  fired, or startup of dirmonitor)
-                active_receiving = True
-                last_time = time.time()
-            else:     #active receiving events
-                current_time = time.time()
-                if current_time - last_time >= timeout:  #cond.wait returned probably because of a timeout
-                    try:
-                            logger.info(u'Send to queue "%(path)s %(config)s %(task)s".',{'path':botsenginepath,'config':'-c' + configdir,'task':busmsg.body})
-                            status=job2queue.send_job_to_jobqueue([sys.executable,botsenginepath,'-c' + configdir,busmsg.body])
-                            if status != 1:
-                                busmsg.delete()
-                            logger.info(JOBQUEUEMESSAGE2TXT[status])
-                            busmsg.delete()
-                    except Exception as msg:
-                        logger.info(u'Error in running task: "%(msg)s".',{'msg':msg})
-                    active_receiving = False
-                else:                                   #cond.wait returned probably because of a timeout
-                    logger.debug(u'time difference to small.')
-                    last_time = current_time
-    cond.release()
-    sys.exit(0)
-
-
-if __name__ == '__main__':
     try:
-        start()
+        while True:
+            # this functions as a buffer: all events go into set tasks.
+            # the tasks are fired to jobqueue after TIMOUT sec.
+            # this is to avoid firing to many tasks to jobqueue; events typically come in bursts.
+            # is value of timeout is larger, reaction times are slower...but less tasks are fired to jobqueue.
+            # in itself this is not a problem, as jobqueue will alos discard duplicate jobs.
+            # 2 sec seems to e a good value: reasonable quick, not to nervous.
+            cond.wait(timeout=timeout)    # get back when results, or after timeout sec
+            # TODO: Trace why messages are somewhat received twice... or not deleted after success
+            busmsg = bus_service.receive_queue_message('botsqueue', peek_lock=True)
+
+            if busmsg.body:
+                print(busmsg.body)
+                if not active_receiving:    # first request (after tasks have been  fired, or startup of dirmonitor)
+                    active_receiving = True
+                    last_time = time.time()
+                else:     # active receiving events
+                    current_time = time.time()
+                    if current_time - last_time >= timeout:  # cond.wait returned probably because of a timeout
+                        try:
+                                logger.info(u'Send to queue "%(path)s %(config)s %(task)s".',
+                                            {'path': botsenginepath, 'config': '-c' + configdir, 'task': busmsg.body})
+
+                                status = job2queue.send_job_to_jobqueue([
+                                    sys.executable, botsenginepath, '-c' + configdir, busmsg.body
+                                ])
+
+                                if status != 1:
+                                    busmsg.delete()
+                                logger.info(JOBQUEUEMESSAGE2TXT[status])
+                                busmsg.delete()
+                        except Exception as msg:
+                            logger.info(u'Error in running task: "%(msg)s".', {'msg': msg})
+                        active_receiving = False
+                    else:                                   # cond.wait returned probably because of a timeout
+                        logger.debug(u'time difference to small.')
+                        last_time = current_time
+
     except KeyboardInterrupt:
         print('CTRL+C pressed, terminating')
+        cond.release()
         sys.exit(0)
     except SystemExit:
         print('Goodbye')
+        cond.release()
         sys.exit(0)
+
+
+if __name__ == '__main__':
+    start()
