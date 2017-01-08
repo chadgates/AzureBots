@@ -1,4 +1,3 @@
---find-links wheelhouse
 cherrypy==8.1.2
 genshi>=0.7,<0.8
 django>=1.7,<1.8
