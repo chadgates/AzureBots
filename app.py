@@ -1,6 +1,9 @@
-from bots import webserver
-wsgi_app = webserver.start()
+import django.core.handlers.wsgi
+from bots import apachewebserver
 
+class wsgi_app():
+    apachewebserver.start()
+    application = django.core.handlers.wsgi.WSGIHandler()
 
 if __name__ == '__main__':
     from wsgiref.simple_server import make_server
