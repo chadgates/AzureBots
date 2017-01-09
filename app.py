@@ -2,7 +2,7 @@ import django.core.handlers.wsgi
 from bots import apachewebserver
 
 class wsgi_app():
-    apachewebserver.start()
+
     application = django.core.handlers.wsgi.WSGIHandler()
 
 if __name__ == '__main__':
