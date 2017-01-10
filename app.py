@@ -1,8 +1,6 @@
-#!/usr/bin/env python
-from bots import webserver
+import django.core.handlers.wsgi
+from bots import apachewebserver
 
-class wsgi_app:
-    webserver.start()
-
-if __name__ == '__main__':
-    application = wsgi_app()
+class wsgi_app():
+    apachewebserver.start('config')
+    application = django.core.handlers.wsgi.WSGIHandler()
