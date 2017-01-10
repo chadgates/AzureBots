@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 from bots import webserver
 
-if __name__ == '__main__':
+class wsgi_app:
     webserver.start()
+
+if __name__ == '__main__':
+    application = wsgi_app()
