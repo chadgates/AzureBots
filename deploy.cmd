@@ -105,6 +105,11 @@ popd
 
 :postPython
 
+IF EXIST "%DEPLOYMENT_TARGET%\applicationHost.xdt" (
+    echo Copy applicationHost.xdt file to site root
+    cp "%DEPLOYMENT_TARGET%\applicationHost.xdt" %HOME%\site\applicationHost.xdt
+    )
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 :: Post deployment stub
