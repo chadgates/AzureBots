@@ -3,5 +3,4 @@
 -r base.txt
 
 azure-servicebus==0.20.3
-wfastcgi==2.2.1
 # pyinotify==0.9.6
