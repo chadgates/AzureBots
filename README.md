@@ -49,3 +49,7 @@ That installed correctly. But now was plagues with IIS failure:
     
 Fixing came by implementing a applicationHost.xdt file. The deploy.cmd will copy that file to the right site directory after deployment. 
 https://github.com/Azure/azure-python-siteextensions/issues/2
+
+As this install is looking to use the bots-jobqueue server, and receive triggers via the Azure Service Bus Queue, 
+WebJobs are needed. As per best practise, a retry-communication job is started every 30 minutes. 
+

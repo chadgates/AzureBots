@@ -61,7 +61,7 @@ def start():
         else:
             print('Info: Azure queue already exists')
     except:
-        print 'Error: Azure queue does not exist, nor can it be created'
+        print ('Error: Azure queue does not exist, nor can it be created: ' + os.getenv('AZURE_SERVICE_NAMESPACE'))
         sys.exit(1)
 
     process_name = 'azurebus'
