@@ -11,5 +11,5 @@ bus_service = ServiceBusService(
     shared_access_key_name=os.getenv('AZURE_SHARED_ACCESS_KEY_NAME'),
     shared_access_key_value=os.getenv('AZURE_SHARED_ACCESS_KEY_VALUE'))
 
-msg = Message(b'NothingSHouldBeRunning')
+msg = Message(b'azurequeue')
 bus_service.send_queue_message('botsqueue', msg)
