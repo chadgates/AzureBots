@@ -51,5 +51,6 @@ Fixing came by implementing a applicationHost.xdt file. The deploy.cmd will copy
 https://github.com/Azure/azure-python-siteextensions/issues/2
 
 As this install is looking to use the bots-jobqueue server, and receive triggers via the Azure Service Bus Queue, 
-WebJobs are needed. As per best practise, a retry-communication job is started every 30 minutes. 
-
+WebJobs are needed. As per best practise, a retry-communication job is started every 30 minutes.
+http://blog.amitapple.com/post/74215124623/deploy-azure-webjobs/
+http://withouttheloop.com/articles/2015-06-23-deploying-custom-services-as-azure-webjobs/
