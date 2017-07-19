@@ -2,5 +2,5 @@
 #	production that aren't in development.
 -r base.txt
 
-azure-servicebus==0.20.3
+azure-servicebus==0.21.0
 # pyinotify==0.9.6
