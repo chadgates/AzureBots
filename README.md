@@ -86,4 +86,5 @@ The routes should have this directory as income channel only.
 The route MUST delete the file.
 
 
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
+### And where is the deploy to azure button ? 
+Work in progress.... 
