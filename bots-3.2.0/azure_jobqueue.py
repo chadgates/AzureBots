@@ -80,15 +80,15 @@ def start():
     queue_options.dead_lettering_on_message_expiration = True
 
     if bus_service.create_queue('botsqueue', queue_options, fail_on_exist=False):
-        logger.log(25, u'Bots %(process_name)s azurequeue created: "%(azurequeue)s', {'process_name': process_name,
+        logger.log(25, u'Bots %(process_name)s azurequeue created: "%(azurequeue)s"', {'process_name': process_name,
                                                                                       'azurequeue': 'botsqueue'})
     else:
-        logger.log(25, u'Bots %(process_name)s azurequeue connected: "%(azurequeue)s', {'process_name': process_name,
+        logger.log(25, u'Bots %(process_name)s azurequeue connected: "%(azurequeue)s"', {'process_name': process_name,
                                                                                         'azurequeue': 'botsqueue'})
 
 
     port = botsglobal.ini.getint('jobqueue','port',28082)
-    server = SimpleXMLRPCServer(('localhost', port), logRequests=False)
+    server = SimpleXMLRPCServer(('127.0.0.1', port), logRequests=False)
     server.register_introspection_functions()
     server.register_instance(Jobqueue(logger))
 
