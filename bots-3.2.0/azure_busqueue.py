@@ -15,8 +15,8 @@ import base64
 
 from azure.servicebus import ServiceBusService, Queue, Message
 
-# TODO: Make this available in BOTS.INI
 
+# Takes these from ENVIRONMENT !!!!
 bus_service = ServiceBusService(
     service_namespace=os.getenv('AZURE_SERVICE_NAMESPACE'),
     shared_access_key_name=os.getenv('AZURE_SHARED_ACCESS_KEY_NAME'),
@@ -69,7 +69,7 @@ bus_service = ServiceBusService(
 def maxruntimeerror(logger, maxruntime, jobnumber, task_to_run):
     logger.error(u'Job %(job)s exceeded maxruntime of %(maxruntime)s minutes',
                  {'job': jobnumber, 'maxruntime': maxruntime})
-    botslib.sendbotserrorreport(u'[Bots Azure Job Queue] - Job exceeded maximum runtime',
+    botslib.sendbotserrorreport(u'[Bots Azure Bus Queue] - Job exceeded maximum runtime',
                                 u'Job %(job)s exceeded maxruntime of %(maxruntime)s minutes:\n %(task)s' % {
                                     'job': jobnumber, 'maxruntime': maxruntime, 'task': task_to_run})
 
@@ -124,7 +124,7 @@ def start():
         print 'Error: bots jobqueue cannot start; not enabled in %s/bots.ini' % configdir
         sys.exit(1)
 
-    process_name = 'azure_jobqueue'
+    process_name = 'azure_busqueue'
     logger = botsinit.initserverlogging(process_name)
     logger.log(25, u'Bots %(process_name)s started.', {'process_name': process_name})
     logger.log(25, u'Bots %(process_name)s configdir: "%(configdir)s".',
@@ -174,7 +174,7 @@ def start():
                 except Exception as msg:
 
                     logger.error(u'Error reading job %(job)s: %(msg)s', {'job': jobnumber, 'msg': msg})
-                    botslib.sendbotserrorreport(u'[Bots Azure Queue] - Error reading job',
+                    botslib.sendbotserrorreport(u'[Bots Azure Bus Queue] - Error reading job',
                                                 u'Error reading job %(job)s:\n '
                                                 u'%(rec_msg)s\n\n'
                                                 u' %(msg)s' % {
@@ -190,7 +190,7 @@ def start():
                 else:
                     msg = 'File does not contain the route element.'
                     logger.error(u'Error starting job %(job)s: %(msg)s', {'job': jobnumber, 'msg': msg})
-                    botslib.sendbotserrorreport(u'[Bots Azure Queue] - Error starting job',
+                    botslib.sendbotserrorreport(u'[Bots Azure Bus Queue] - Error starting job',
                                                 u'Error starting job %(job)s:\n '
                                                 u'%(rec_msg)s\n\n'
                                                 u' %(msg)s' % {
@@ -219,7 +219,7 @@ def start():
                         f.close()
                     except Exception as msg:
                         logger.error(u'Error starting job %(job)s: %(msg)s', {'job': jobnumber, 'msg': msg})
-                        botslib.sendbotserrorreport(u'[Bots Azure Queue] - Error writing file',
+                        botslib.sendbotserrorreport(u'[Bots Azure Bus Queue] - Error writing file',
                                                     u'Error writing file %(job)s:\n '
                                                     u'%(task)s\n\n'
                                                     u'%(filename)s\n\n'
@@ -247,7 +247,7 @@ def start():
 
                 except Exception as msg:
                     logger.error(u'Error starting job %(job)s: %(msg)s', {'job': jobnumber, 'msg': msg})
-                    botslib.sendbotserrorreport(u'[Bots Azure Queue] - Error starting job',
+                    botslib.sendbotserrorreport(u'[Bots Azure Bus Queue] - Error starting job',
                                                 u'Error starting job %(job)s:\n %(task)s\n\n %(msg)s' % {
                                                     'job': jobnumber,
                                                     'task': task_to_run,
