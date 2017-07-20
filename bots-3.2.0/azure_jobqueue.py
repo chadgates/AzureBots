@@ -35,6 +35,10 @@ class Jobqueue(object):
 
 def start():
     """
+    this is a drop-in replacement in case the user want to use the standard (as per bots default install) jobqueue,
+    and put the jobs into the Azure Service Bus.
+    ATTENTION: THIS WILL NOT WORK ON AZURE APP SERVICE, and can only be used in an environment that enables access
+    to the localhost:xmlrpc server port (like on a Azure Virtual Machine, or your local installation or ...).
     """
     # NOTE: bots directory should always be on PYTHONPATH - otherwise it will not start.
     # ***command line arguments**************************
@@ -88,7 +92,7 @@ def start():
 
 
     port = botsglobal.ini.getint('jobqueue','port',28082)
-    server = SimpleXMLRPCServer(('127.0.0.1', port), logRequests=False)
+    server = SimpleXMLRPCServer(('localhost', port), logRequests=False)
     server.register_introspection_functions()
     server.register_instance(Jobqueue(logger))
 

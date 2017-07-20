@@ -54,3 +54,33 @@ As this install is looking to use the bots-jobqueue server, and receive triggers
 WebJobs are needed. As per best practise, a retry-communication job is started every 30 minutes.
 http://blog.amitapple.com/post/74215124623/deploy-azure-webjobs/
 http://withouttheloop.com/articles/2015-06-23-deploying-custom-services-as-azure-webjobs/
+
+### Jobqueues 
+Unfortunately, the XML-RPC Job Queue Server will not work in Azure App Service. Have tried multiple options which you will find in this repository.
+The main issue is that one process cannot talk to another process over localhost:someother port unless they are 
+in the same sandbox. But even that did not work for me - I tries to spawn the XMLRPC server in the app.py (which worked locally), 
+but I never got to make it work on Azure. Some infos here:
+https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox
+
+As a result, I ditched the jobqueue server completely and made BOTS take jobs/put jobs only via the Azure Service Bus. 
+However, this comes at the cost of adjusted BOTS.ini and job2queue.py which are not as per BOTS source. 
+
+### Azure Service Bus 
+A continous WebJob 'azurequeue' receives messages and stores them in BOTSSYS/botsqueue directory.
+The messages are expected in following format:
+
+JSON Format:
+
+    {'route': 'azurequeue',
+    'filename': '6820162_20140611201926_1009634015.txt',
+    'content': base64gzip-encoded-content
+    }
+
+The content must be base64 encoded and gzipped.
+example:
+file = open("some_edi_file.txt")
+base64gz = base64.b64encode(zlib.compress(file.read()))
+
+The files are written into the directory BOTSSYS/botsqueue.
+The routes should have this directory as income channel only.
+The route MUST delete the file.

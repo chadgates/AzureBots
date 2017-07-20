@@ -11,9 +11,7 @@ from bots import botsglobal
 import json
 import zlib
 import base64
-# from SimpleXMLRPCServer import SimpleXMLRPCServer
-
-from azure.servicebus import ServiceBusService, Queue, Message
+from azure.servicebus import ServiceBusService, Queue
 
 
 # Takes these from ENVIRONMENT !!!!
@@ -22,57 +20,14 @@ bus_service = ServiceBusService(
     shared_access_key_name=os.getenv('AZURE_SHARED_ACCESS_KEY_NAME'),
     shared_access_key_value=os.getenv('AZURE_SHARED_ACCESS_KEY_VALUE'))
 
-# -------------------------------------------------------------------------------
 
 
-# class JobqueueServer(threading.Thread):
-#     """
-#     An RPC server for backward compatibility. This is required by the bots web gui to enable to start jobs via
-#     front end.
-#
-#     The jobs are passed into the Azure Job-Queue.
-#     This is a drop-in replacement for the bots-jobqueuserver, therefore the bots-jobqueueserver should not be
-#     running at the same time.
-#     """
-#     class Jobqueue(object):
-#         """
-#         Provides the addjob function required by the bots web gui
-#         """
-#         def __init__(self, logger):
-#             self.logger = logger
-#
-#         def addjob(self, task, priority):
-#             envelope = {u'route': task[3]}
-#             msg = Message(json.dumps(envelope))
-#             bus_service.send_queue_message('botsqueue', msg)
-#             self.logger.info(u'Added job: %(task)s',
-#                              {'task': task[3]})
-#             return 0
-#
-#     def __init__(self, ip, port, logger):
-#         super(JobqueueServer, self).__init__()
-#         self.running = True
-#         self.logger = logger
-#         self.server = SimpleXMLRPCServer((ip, port), logRequests=False)
-#         self.server.register_introspection_functions()
-#         self.server.register_instance(self.Jobqueue(self.logger))
-#
-#     def run(self):
-#         self.server.serve_forever()
-#
-#     def stop_server(self):
-#         self.server.shutdown()
-#         self.server.server_close()
-
-
-# -------------------------------------------------------------------------------
 def maxruntimeerror(logger, maxruntime, jobnumber, task_to_run):
     logger.error(u'Job %(job)s exceeded maxruntime of %(maxruntime)s minutes',
                  {'job': jobnumber, 'maxruntime': maxruntime})
     botslib.sendbotserrorreport(u'[Bots Azure Bus Queue] - Job exceeded maximum runtime',
                                 u'Job %(job)s exceeded maxruntime of %(maxruntime)s minutes:\n %(task)s' % {
                                     'job': jobnumber, 'maxruntime': maxruntime, 'task': task_to_run})
-
 
 def start():
     """
@@ -144,10 +99,6 @@ def start():
         logger.log(25, u'Bots %(process_name)s azurequeue connected: "%(azurequeue)s', {'process_name': process_name,
                                                                                         'azurequeue': 'botsqueue'})
 
-    # Initialized XML RPC Server for backward compatibility
-    # port = botsglobal.ini.getint('jobqueue','port',28082)
-    # xmlrpcserver = JobqueueServer('localhost', port, logger)
-    # xmlrpcserver.start()
 
     # Get path to bots-engine
     botsenginepath = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])),
@@ -231,7 +182,7 @@ def start():
                         busmsg.delete()
                         continue
 
-            # Starting the timer thread and engage the bots engine
+                # Starting the timer thread and engage the bots engine
                 timer_thread = threading.Timer(maxseconds, maxruntimeerror,
                                                args=(logger, maxruntime, jobnumber, task_to_run))
                 timer_thread.start()
@@ -268,8 +219,6 @@ def start():
     except KeyboardInterrupt:
         pass
 
-    # stopping the XMLRPC Server
-    # xmlrpcserver.stop_server()
     sys.exit(0)
 
 if __name__ == '__main__':

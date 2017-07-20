@@ -10,7 +10,7 @@ JOBQUEUEMESSAGE2TXT = {
     0: u'OK, job is added to queue',
     1: u'Error, job not to jobqueue. Can not contact jobqueue-server',
     4: u'Duplicate job, not added.',
-    }
+    5: u'Error, unknown jobqueue, not added'}
 
 
 def send_job_to_jobqueue(task_args,priority=5):
@@ -20,14 +20,37 @@ def send_job_to_jobqueue(task_args,priority=5):
         Received return codes  from jobqueueserver:
         0 = OK, job added to job queue.
         4 = job is a duplicate of job already in the queue
+        5 = there is no configuration for that queue
     '''
-    try:
-        remote_server = xmlrpclib.ServerProxy(u'http://localhost:' + unicode(botsglobal.ini.getint('jobqueue','port',28082)))
-        return remote_server.addjob(task_args,priority)
-    except socket.error as msg:
-        print 'socket.error',msg
-        return 1    #jobqueueserver server not active
+    queue_type = botsglobal.ini.get('jobqueue', 'queue_type', 'XMLRPC')
 
+    if queue_type == 'XMLRPC':
+        try:
+            remote_server = xmlrpclib.ServerProxy(u'http://localhost:' + unicode(botsglobal.ini.getint('jobqueue','port',28082)))
+            return remote_server.addjob(task_args,priority)
+        except socket.error as msg:
+            print 'socket.error',msg
+            return 1    #jobqueueserver server not active
+    elif queue_type == 'AZURE':
+        try:
+
+            from azure.servicebus import ServiceBusService, Message, Queue
+            import json
+
+            bus_service = ServiceBusService(
+                service_namespace=os.getenv('AZURE_SERVICE_NAMESPACE'),
+                shared_access_key_name=os.getenv('AZURE_SHARED_ACCESS_KEY_NAME'),
+                shared_access_key_value=os.getenv('AZURE_SHARED_ACCESS_KEY_VALUE'))
+
+            envelope = {u'route': task_args[3]}
+            msg = Message(json.dumps(envelope))
+            bus_service.send_queue_message('botsqueue', msg)
+            return 0
+        except Exception as msg:
+            print 'Exception:', msg
+            return 1  # could not connect
+    else:
+        return 5
 
 def start():
     #NOTE: bots directory should always be on PYTHONPATH - otherwise it will not start.

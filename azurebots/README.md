@@ -8,3 +8,4 @@ the App_data_optional folder contains a version that uses the BOTS native Job-Qu
  Example could be, that an FTP service is hosted in the cloud and when a file is written, a message
  is placed in the service bus to trigger bots to run a route. 
  
+ azuretojobqueue
