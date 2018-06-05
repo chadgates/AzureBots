@@ -1,1 +1,0 @@
-D:\home\site\wwwroot\env\Scripts\python.exe D:\home\site\wwwroot\bots-3.2.0\bots-jobqueueserver.py

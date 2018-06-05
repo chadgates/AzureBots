@@ -26,7 +26,7 @@ def send_job_to_jobqueue(task_args,priority=5):
 
     if queue_type == 'XMLRPC':
         try:
-            remote_server = xmlrpclib.ServerProxy(u'http://0.0.0.0:' + unicode(botsglobal.ini.getint('jobqueue','port',28082)))
+            remote_server = xmlrpclib.ServerProxy(u'http://localhost:' + unicode(botsglobal.ini.getint('jobqueue','port',28082)))
             return remote_server.addjob(task_args,priority)
         except socket.error as msg:
             print 'socket.error',msg
