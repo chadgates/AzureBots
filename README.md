@@ -1,6 +1,11 @@
 # AzureBots
 Deployment of BOTS in Azure
 
+To get started with the deployment of a python app as an App Service, follow this guide, which also covers pushing
+updates via GIT to the build process:
+https://docs.microsoft.com/en-us/azure/app-service/app-service-web-get-started-python
+
+
 ## Bots 3.2 
 Has been added to this it is required for installation from source and cannot be installed through PIP.
 
