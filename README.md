@@ -55,10 +55,18 @@ That installed correctly. But now was plagues with IIS failure:
 Fixing came by implementing a applicationHost.xdt file. The deploy.cmd will copy that file to the right site directory after deployment. 
 https://github.com/Azure/azure-python-siteextensions/issues/2
 
+For media files (static files) to be provided by IIS, in "Application Settings" add under Virtual applications and 
+directories an entry for: 
+    
+    virtual path:    physical path:
+    /media           site\wwwroot\bots-3.2.0\bots\media
+
+
 As this install is looking to use the bots-jobqueue server, and receive triggers via the Azure Service Bus Queue, 
 WebJobs are needed. As per best practise, a retry-communication job is started every 30 minutes.
 http://blog.amitapple.com/post/74215124623/deploy-azure-webjobs/
 http://withouttheloop.com/articles/2015-06-23-deploying-custom-services-as-azure-webjobs/
+
 
 ### Jobqueues 
 Unfortunately, the XML-RPC Job Queue Server will not work in Azure App Service. Have tried multiple options which you will find in this repository.
@@ -69,6 +77,7 @@ https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox
 
 As a result, I ditched the jobqueue server completely and made BOTS take jobs/put jobs only via the Azure Service Bus. 
 However, this comes at the cost of adjusted BOTS.ini and job2queue.py which are not as per BOTS source. 
+
 
 ### Azure Service Bus 
 A continous WebJob 'azurequeue' receives messages and stores them in BOTSSYS/botsqueue directory.
