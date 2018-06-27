@@ -89,6 +89,32 @@ echo Pip install requirements.
 env\Scripts\python.exe -m pip install --upgrade -r requirements.txt
 IF !ERRORLEVEL! NEQ 0 goto error
 
+
+:: 3.1 Install BOTS
+env\Scripts\python.exe bots-3.2.0\setup.py install
+
+:: 3.2 Do the BOTS directory juggling
+IF NOT EXIST "%DEPLOYMENT_TARGET%\botssys" (
+    echo Creating an initial BOTSSYS directory
+    move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\botssys %DEPLOYMENT_TARGET%
+    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\botssys %DEPLOYMENT_TARGET%/botssys
+)
+IF NOT EXIST "%DEPLOYMENT_TARGET%\usersys" (
+    echo Creating an initial USERSYS directory
+    move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\usersys %DEPLOYMENT_TARGET%
+    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\usersys %DEPLOYMENT_TARGET%/usersys
+)
+IF NOT EXIST "%DEPLOYMENT_TARGET%\config" (
+    echo Creating an initial CONFIG directory
+    move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\config %DEPLOYMENT_TARGET%
+    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\config %DEPLOYMENT_TARGET%/config
+)
+IF NOT EXIST "%DEPLOYMENT_TARGET%\media" (
+    echo Creating an initial MEDIA directory
+    move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\media %DEPLOYMENT_TARGET%
+    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\media %DEPLOYMENT_TARGET%/media
+)
+
 :: 4. Django collectstatic
 IF EXIST "%DEPLOYMENT_TARGET%\manage.py" (
   IF EXIST "%DEPLOYMENT_TARGET%\env\lib\site-packages\django" (
