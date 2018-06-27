@@ -12,4 +12,4 @@ paramiko==2.0.2
 cdecimal==2.3
 certifi
 six==1.11.0
-suds-jurko>=0.6,<0.7
+# suds-jurko>=0.6,<0.7
