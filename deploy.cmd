@@ -97,23 +97,28 @@ env\Scripts\python.exe bots-3.2.0\setup.py install
 IF NOT EXIST "%DEPLOYMENT_TARGET%\botssys" (
     echo Creating an initial BOTSSYS directory
     move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\botssys %DEPLOYMENT_TARGET%
-    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\botssys %DEPLOYMENT_TARGET%/botssys
+    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\botssys %DEPLOYMENT_TARGET%\botssys
 )
 IF NOT EXIST "%DEPLOYMENT_TARGET%\usersys" (
     echo Creating an initial USERSYS directory
     move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\usersys %DEPLOYMENT_TARGET%
-    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\usersys %DEPLOYMENT_TARGET%/usersys
+    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\usersys %DEPLOYMENT_TARGET%\usersys
 )
 IF NOT EXIST "%DEPLOYMENT_TARGET%\config" (
     echo Creating an initial CONFIG directory
     move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\config %DEPLOYMENT_TARGET%
-    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\config %DEPLOYMENT_TARGET%/config
+    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\config %DEPLOYMENT_TARGET%\config
 )
 IF NOT EXIST "%DEPLOYMENT_TARGET%\media" (
     echo Creating an initial MEDIA directory
     move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\media %DEPLOYMENT_TARGET%
-    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\media %DEPLOYMENT_TARGET%/media
+    mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\media %DEPLOYMENT_TARGET%\media
 )
+
+mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\botssys %DEPLOYMENT_TARGET%\botssys
+mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\usersys %DEPLOYMENT_TARGET%\usersys
+mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\config %DEPLOYMENT_TARGET%\config
+mklink /D %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\media %DEPLOYMENT_TARGET%\media
 
 :: 4. Django collectstatic
 IF EXIST "%DEPLOYMENT_TARGET%\manage.py" (
