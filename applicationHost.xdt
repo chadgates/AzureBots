@@ -3,7 +3,7 @@
   <system.webServer>
     <fastCgi>
       <application
-        fullPath="D:\home\Python27\python.exe"
+        fullPath="D:\home\site\wwwroot\env\Scripts\python.exe"
         arguments="D:\home\Python27\wfastcgi.py"
         maxInstances="16"
         idleTimeout="21600"
@@ -12,7 +12,7 @@
         xdt:Transform="InsertIfMissing"
         xdt:Locator="Match(fullPath)">
         <environmentVariables>
-          <environmentVariable name="PYTHONHOME" value="D:\home\Python27" />
+          <environmentVariable name="PYTHONHOME" value="D:\home\site\wwwroot\env" />
         </environmentVariables>
       </application>
     </fastCgi>

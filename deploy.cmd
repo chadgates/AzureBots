@@ -91,7 +91,7 @@ IF !ERRORLEVEL! NEQ 0 goto error
 
 
 :: 3.1 Install BOTS
-env\Scripts\python.exe bots-3.2.0\setup.py install
+env\Scripts\python.exe azurebots\bots-3.2.0\setup.py install
 
 :: 3.2 Do the BOTS directory juggling
 IF NOT EXIST "%DEPLOYMENT_TARGET%\botssys" (

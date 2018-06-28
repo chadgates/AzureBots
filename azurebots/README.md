@@ -1,5 +1,8 @@
 **Content of this file**
 
+bots-3.2.0 contains the source code for installation. this is used by the deploy.cmd to install bots to python via setup install script. 
+
+
 sendtobus.py has some examples of sending messages to the azure service bus to test the queues. 
 
 the App_data_optional folder contains a version that uses the BOTS native Job-Queue. The messages from 
