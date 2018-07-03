@@ -94,20 +94,6 @@ IF !ERRORLEVEL! NEQ 0 goto error
 env\Scripts\python.exe azurebots\bots-3.2.0\setup.py install
 
 :: 3.2 Do the BOTS directory juggling
-IF NOT EXIST "%DEPLOYMENT_TARGET%\botssys" (
-    echo Creating an initial BOTSSYS directory
-    move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\botssys %DEPLOYMENT_TARGET%
-    )
-
-IF NOT EXIST "%DEPLOYMENT_TARGET%\usersys" (
-    echo Creating an initial USERSYS directory
-    move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\usersys %DEPLOYMENT_TARGET%
-)
-
-IF NOT EXIST "%DEPLOYMENT_TARGET%\config" (
-    echo Creating an initial CONFIG directory
-    move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\config %DEPLOYMENT_TARGET%
-)
 
 IF NOT EXIST "%DEPLOYMENT_TARGET%\media" (
     echo Creating an initial MEDIA directory
