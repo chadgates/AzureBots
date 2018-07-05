@@ -282,31 +282,11 @@ def make_index(cleaned_data,filename):
     ''' generate only the index file of the plugin.
         used eg for configuration change management.
     '''
-    import logging
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-    handler = logging.handlers.TimedRotatingFileHandler(
-        os.path.join(botsglobal.ini.get('directories', 'logging'), 'indexwrite.log'), when='midnight', backupCount=10)
-    fileformat = logging.Formatter("%(asctime)s %(levelname)-9s: %(message)s", '%Y%m%d %H:%M:%S')
-    handler.setFormatter(fileformat)
-    logger.addHandler(handler)
-
-    logger.debug(u'Next command %(command)s',{'command':'plugs=all_database2plug'})
     plugs = all_database2plug(cleaned_data)
-    logger.debug(u'Next command %(command)s',{'command':'plugsasstring = make_plugs2strin'})
     plugsasstring = make_plugs2string(plugs)
-    logger.debug(u'Next command %(command)s',{'command':'filehandler = codecs.open'})
     filehandler = codecs.open(filename,'w','utf-8')
-    logger.debug(u'Next command %(command)s',{'command':'filehandler.write'})
     filehandler.write(plugsasstring)
-    logger.debug(u'Next command %(command)s',{'command':'filehandler.close'})
     filehandler.close()
-
-    #plugs = all_database2plug(cleaned_data)
-    #plugsasstring = make_plugs2string(plugs)
-    #filehandler = codecs.open(filename,'w','utf-8')
-    #filehandler.write(plugsasstring)
-    #filehandler.close()
 
 def make_plugin(cleaned_data,filename):
     pluginzipfilehandler = zipfile.ZipFile(filename, 'w', zipfile.ZIP_DEFLATED)
