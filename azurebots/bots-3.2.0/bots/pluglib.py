@@ -282,11 +282,23 @@ def make_index(cleaned_data,filename):
     ''' generate only the index file of the plugin.
         used eg for configuration change management.
     '''
+
+    botsglobal.logger.debug(u'Next command %(command)s',{'command':'plugs=all_database2plug'})
     plugs = all_database2plug(cleaned_data)
+    botsglobal.logger.debug(u'Next command %(command)s',{'command':'plugsasstring = make_plugs2strin'})
     plugsasstring = make_plugs2string(plugs)
+    botsglobal.logger.debug(u'Next command %(command)s',{'command':'filehandler = codecs.open'})
     filehandler = codecs.open(filename,'w','utf-8')
+    botsglobal.logger.debug(u'Next command %(command)s',{'command':'filehandler.write'})
     filehandler.write(plugsasstring)
+    botsglobal.logger.debug(u'Next command %(command)s',{'command':'filehandler.close'})
     filehandler.close()
+
+    #plugs = all_database2plug(cleaned_data)
+    #plugsasstring = make_plugs2string(plugs)
+    #filehandler = codecs.open(filename,'w','utf-8')
+    #filehandler.write(plugsasstring)
+    #filehandler.close()
 
 def make_plugin(cleaned_data,filename):
     pluginzipfilehandler = zipfile.ZipFile(filename, 'w', zipfile.ZIP_DEFLATED)

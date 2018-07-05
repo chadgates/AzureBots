@@ -218,7 +218,10 @@ def initserverlogging(logname):
     logger.addHandler(handler)
     # initialise console/screen logging
     if botsglobal.ini.getboolean(logname,'log_console',True):
-        console = logging.StreamHandler()
+        # console = logging.StreamHandler()
+        console = logging.handlers.TimedRotatingFileHandler(
+            os.path.join(botsglobal.ini.get('directories', 'logging'), logname + 'console.log'), when='midnight',
+            backupCount=10)
         console.setLevel(convertini2logger[botsglobal.ini.get(logname,'log_console_level','STARTINFO')])
         consoleformat = logging.Formatter("%(asctime)s %(levelname)-9s: %(message)s",'%Y%m%d %H:%M:%S')
         console.setFormatter(consoleformat) # add formatter to console
