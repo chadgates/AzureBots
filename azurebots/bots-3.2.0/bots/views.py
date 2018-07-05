@@ -478,20 +478,40 @@ def plugin_index(request,*kw,**kwargs):
         return django.shortcuts.redirect('/home')
 
 def plugout_index(request,*kw,**kwargs):
+    import logging
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    handler = logging.handlers.TimedRotatingFileHandler(
+        os.path.join(botsglobal.ini.get('directories', 'logging'), 'indexwrite.log'), when='midnight', backupCount=10)
+    fileformat = logging.Formatter("%(asctime)s %(levelname)-9s: %(message)s", '%Y%m%d %H:%M:%S')
+    handler.setFormatter(fileformat)
+    logger.addHandler(handler)
+
     if request.method == 'GET':
+        logger.debug('line 491')
         filename = botslib.join(botsglobal.ini.get('directories','usersysabs'),'index.py')
+        logger.debug('line 492')
         botsglobal.logger.info(_(u'Start writing configuration index file "%(file)s".'),{'file':filename})
         try:
+            logger.debug('line 496')
             dummy_for_cleaned_data = {'databaseconfiguration':True,'umlists':botsglobal.ini.getboolean('settings','codelists_in_plugin',True),'databasetransactions':False}
+            logger.debug('line 498')
             pluglib.make_index(dummy_for_cleaned_data,filename)
         except Exception as msg:
+            logger.debug('line 501')
             notification = _(u'Error writing configuration index file: "%s".')%unicode(msg)
+            logger.debug('line 503')
             botsglobal.logger.error(notification)
+            logger.debug('line 505')
             messages.add_message(request, messages.INFO, notification)
         else:
+            logger.debug('line 508')
             notification = _(u'Configuration index file "%s" is written successful.')%filename
+            logger.debug('line 510')
             botsglobal.logger.info(notification)
+            logger.debug('line 512')
             messages.add_message(request, messages.INFO, notification)
+        logger.debug('line 514')
         return django.shortcuts.redirect('/home')
         
 def plugout_backup(request,*kw,**kwargs):
