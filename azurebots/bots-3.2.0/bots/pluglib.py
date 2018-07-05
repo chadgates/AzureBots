@@ -282,16 +282,24 @@ def make_index(cleaned_data,filename):
     ''' generate only the index file of the plugin.
         used eg for configuration change management.
     '''
+    import logging
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    handler = logging.handlers.TimedRotatingFileHandler(
+        os.path.join(botsglobal.ini.get('directories', 'logging'), 'indexwrite.log'), when='midnight', backupCount=10)
+    fileformat = logging.Formatter("%(asctime)s %(levelname)-9s: %(message)s", '%Y%m%d %H:%M:%S')
+    handler.setFormatter(fileformat)
+    logger.addHandler(handler)
 
-    botsglobal.logger.debug(u'Next command %(command)s',{'command':'plugs=all_database2plug'})
+    logger.debug(u'Next command %(command)s',{'command':'plugs=all_database2plug'})
     plugs = all_database2plug(cleaned_data)
-    botsglobal.logger.debug(u'Next command %(command)s',{'command':'plugsasstring = make_plugs2strin'})
+    logger.debug(u'Next command %(command)s',{'command':'plugsasstring = make_plugs2strin'})
     plugsasstring = make_plugs2string(plugs)
-    botsglobal.logger.debug(u'Next command %(command)s',{'command':'filehandler = codecs.open'})
+    logger.debug(u'Next command %(command)s',{'command':'filehandler = codecs.open'})
     filehandler = codecs.open(filename,'w','utf-8')
-    botsglobal.logger.debug(u'Next command %(command)s',{'command':'filehandler.write'})
+    logger.debug(u'Next command %(command)s',{'command':'filehandler.write'})
     filehandler.write(plugsasstring)
-    botsglobal.logger.debug(u'Next command %(command)s',{'command':'filehandler.close'})
+    logger.debug(u'Next command %(command)s',{'command':'filehandler.close'})
     filehandler.close()
 
     #plugs = all_database2plug(cleaned_data)
