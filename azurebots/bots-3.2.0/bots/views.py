@@ -480,7 +480,7 @@ def plugin_index(request,*kw,**kwargs):
 def plugout_index(request,*kw,**kwargs):
 
     if request.method == 'GET':
-        filename = botslib.join(botsglobal.ini.get('directories','usersysabs'),'index.py')
+        filename = botslib.join(botsglobal.ini.get('directories','usersysabs'),'index.py.txt')
         botsglobal.logger.info(_('Start writing configuration index file "%(file)s".'),{'file':filename})
         try:
             dummy_for_cleaned_data = {'databaseconfiguration':True,'umlists':botsglobal.ini.getboolean('settings','codelists_in_plugin',True),'databasetransactions':False}
