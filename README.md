@@ -22,11 +22,14 @@ Documentation: https://bots-edi.github.io/bots
 
 
 ## Comments
-
 Deployment to Azure as an App Service (Web). 
 
 Various hoops needed to be jumped to get this running and thanks again to all the bloggers, parties that communicated 
 about issues that required to be fixed doing this. 
+
+This install is not with an activated job queue as described below. In order to activate the job-queue, the
+content of App_data/jobs must be replaced with the required items from azurebots/App_data_optional/jobs and 
+the bots.ini must be adjusted to contain the correct settings (enable jobqueueserver and define the type).
 
 
 ### Tree of problems
@@ -47,28 +50,32 @@ an updated version, requiring an own deployment script and the installation of a
 https://blogs.msdn.microsoft.com/azureossds/2016/08/25/deploying-django-app-to-azure-app-services-using-git-and-new-version-of-python/
 https://blogs.msdn.microsoft.com/pythonengineering/2016/08/04/upgrading-python-on-azure-app-service/
 
-Have used Python 2.7.13 version, however suds-jurko failed to install. Removed the site-extension and used 2.7.12 instead. 
-That installed correctly. But now was plagues with IIS failure: 
+But now was plagues with IIS failure: 
 
     ErrorDescription	<handler> scriptProcessor could not be found in <fastCGI> application configuration
     
 Fixing came by implementing a applicationHost.xdt file. The deploy.cmd will copy that file to the right site directory after deployment. 
 https://github.com/Azure/azure-python-siteextensions/issues/2
 
-For media files (static files) to be provided by IIS, in "Application Settings" add under Virtual applications and 
-directories an entry for: 
-    
-    virtual path:    physical path:
-    /media           site\wwwroot\bots-3.2.0\bots\media
+The bots-engine could not be started from bots monitor. The reason is that subprocess is started by the python executable 
+that is outside of the virtual environment and therefore the path to bots is not known. web.config needed to adjustement
+to contain the path to the packages where bots is located: 
+
+    <add key="PYTHONPATH" value="D:\home\site\wwwroot;D:\home\site\wwwroot\env\Lib\site-packages" />
+
+Bots allows to create an "index.py" file that contains all settings. However, the wfastcgi script contains a 
+file_handler that monitors any changes to "*.py" files and then restarts the process. Therefore, I have changed
+the filename output to "index.py.txt" in views.py, and fixed another typo. 
 
 
+## Jobqueues
 As this install is looking to use the bots-jobqueue server, and receive triggers via the Azure Service Bus Queue, 
 WebJobs are needed. As per best practise, a retry-communication job is started every 30 minutes.
 http://blog.amitapple.com/post/74215124623/deploy-azure-webjobs/
 http://withouttheloop.com/articles/2015-06-23-deploying-custom-services-as-azure-webjobs/
 
 
-### Jobqueues 
+### Bots-Jobqueue-Server 
 Unfortunately, the XML-RPC Job Queue Server will not work in Azure App Service. Have tried multiple options which you will find in this repository.
 The main issue is that one process cannot talk to another process over localhost:someother port unless they are 
 in the same sandbox. But even that did not work for me - I tries to spawn the XMLRPC server in the app.py (which worked locally), 
@@ -100,5 +107,8 @@ The routes should have this directory as income channel only.
 The route MUST delete the file.
 
 
-### And where is the deploy to azure button ? 
-Work in progress.... 
+## Deploy
+ 
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
+
+The project does not yet contain an azuredeploy.json -> that might follow.
