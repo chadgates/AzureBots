@@ -100,6 +100,12 @@ IF NOT EXIST "%DEPLOYMENT_TARGET%\media" (
     move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\media %DEPLOYMENT_TARGET%
 )
 
+IF NOT EXIST "%DEPLOYMENT_TARGET%\sqlitedb" (
+    echo Creating an initial Database directory
+    mkdir %DEPLOYMENT_TARGET%\sqlitedb
+    move %DEPLOYMENT_TARGET%\env\Lib\site-packages\bots\install\botsdb %DEPLOYMENT_TARGET%\sqlitedb
+)
+
 
 :: 4. Django collectstatic
 IF EXIST "%DEPLOYMENT_TARGET%\manage.py" (
